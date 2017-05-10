@@ -38,20 +38,23 @@ if 'py2exe' in sys.argv:
     #import pyrece
     import wsaa
     import wsfev1, rece1, rg3685
-    import wsfexv1, recex1
-    import wsbfev1, receb1
-    import wsmtx, recem
-    import pyfepdf
-    import pyemail
-    import pyi25
+    #import wsfexv1, recex1
+    #import wsbfev1, receb1
+    #import wsmtx, recem
+    #import pyfepdf
+    #import pyemail
+    #import pyi25
     #import wsctgv3
     #import wslpg
     #import wsltv
+    #import wslum
+    #import wslsp
     #import wscoc
     #import wscdc
     #import cot
     #import iibb
     #import trazamed
+    #import trazaprodmed
     #import trazarenpre
     #import trazafito
     #import trazavet
@@ -113,6 +116,8 @@ if 'py2exe' in sys.argv:
     includes=['email.generator', 'email.iterators', 'email.message', 'email.utils',  'email.mime.text', 'email.mime.application', 'email.mime.multipart']
     if 'pyi25' in globals() or 'pyfepdf' in globals():
         includes.extend(["PIL.Image", "PIL.ImageFont", "PIL.ImageDraw"])
+
+    includes.append("dbf")
 
     # optional modules:
     # required modules for shelve support (not detected by py2exe by default):
@@ -357,6 +362,32 @@ if 'py2exe' in sys.argv:
         __version__ += "+wsltv_" + wsltv.__version__
         HOMO &= wsltv.HOMO
 
+    if 'wslum' in globals():
+        kwargs['com_server'] += [
+            Target(module=wslum, modules="wslum"),
+            ]
+        kwargs['console'] += [
+            Target(module=wslum, script='wslum.py', dest_base="wslum_cli"),
+            ]
+        data_files += [
+            ("conf", ["conf/wslum.ini"]),
+            ]
+        __version__ += "+wslum_" + wslum.__version__
+        HOMO &= wslum.HOMO
+
+    if 'wslsp' in globals():
+        kwargs['com_server'] += [
+            Target(module=wslsp, modules="wslsp"),
+            ]
+        kwargs['console'] += [
+            Target(module=wslsp, script='wslsp.py', dest_base="wslsp_cli"),
+            ]
+        data_files += [
+            ("conf", ["conf/wslsp.ini"]),
+            ]
+        __version__ += "+wslsp_" + wslsp.__version__
+        HOMO &= wslsp.HOMO
+
     if 'wscoc' in globals():
         kwargs['com_server'] += [
             Target(module=wscoc,modules="wscoc"),
@@ -419,6 +450,16 @@ if 'py2exe' in sys.argv:
             data_files.append((".", ["trazamed.tlb"]))
         __version__ += "+trazamed_"  + trazamed.__version__
         HOMO &= trazamed.HOMO
+
+    if 'trazaprodmed' in globals():
+        kwargs['com_server'] += [
+            Target(module=trazaprodmed, modules="trazaprodmed", create_exe=not trazaprodmed.TYPELIB, create_dll=not trazaprodmed.TYPELIB),
+            ]
+        kwargs['console'] += [
+            Target(module=trazaprodmed, script='trazaprodmed.py', dest_base="trazaprodmed_cli"), 
+            ]
+        __version__ += "+trazaprodmed_"  + trazaprodmed.__version__
+        HOMO &= trazaprodmed.HOMO
 
     if 'trazarenpre' in globals():
         kwargs['com_server'] += [
