@@ -41,10 +41,12 @@ if 'py2exe' in sys.argv:
     #import wsfexv1, recex1
     #import wsbfev1, receb1
     #import wsmtx, recem
+    #import wsct, recet
+    #import ws_sr_padron
     #import pyfepdf
     #import pyemail
     #import pyi25
-    #import wsctgv3
+    #import wsctg
     #import wslpg
     #import wsltv
     #import wslum
@@ -264,6 +266,17 @@ if 'py2exe' in sys.argv:
         __version__ += "+wsmtx_" + wsmtx.__version__
         HOMO &= wsmtx.HOMO
 
+    if 'wsct' in globals():
+        kwargs['com_server'] += [
+            Target(module=wsct, modules="wsct", create_exe=True, create_dll=True)
+            ]
+        kwargs['console'] += [
+            Target(module=wsct, script='wsct.py', dest_base="wsct_cli"), 
+            Target(module=recet, script='recet.py'), 
+            ]
+        __version__ += "+wsct_" + wsct.__version__
+        HOMO &= wsct.HOMO
+
     if 'pyfepdf' in globals():
         kwargs['com_server'] += [
             Target(module=pyfepdf, modules="pyfepdf", create_exe=True, create_dll=True),
@@ -316,15 +329,15 @@ if 'py2exe' in sys.argv:
             Target(module=designer, script="designer.py", dest_base="designer"),
             ]
             
-    if 'wsctgv3' in globals():
+    if 'wsctg' in globals():
         kwargs['com_server'] += [
-            Target(module=wsctgv3, modules="wsctgv3"), 
+            Target(module=wsctg, modules="wsctg"), 
             ]
         kwargs['console'] += [
-            Target(module=wsctgv3, script='wsctgv3.py', dest_base="wsctgv3_cli"),
+            Target(module=wsctg, script='wsctg.py', dest_base="wsctg_cli"),
             ]
-        __version__ += "+wsctgv3_" + wsctgv3.__version__
-        HOMO &= wsctgv3.HOMO
+        __version__ += "+wsctgv4_" + wsctg.__version__
+        HOMO &= wsctg.HOMO
 
     if 'wslpg' in globals():
         kwargs['com_server'] += [
@@ -407,6 +420,16 @@ if 'py2exe' in sys.argv:
             ]
         __version__ += "+wscdc_" + wscdc.__version__
         HOMO &= wscdc.HOMO
+
+    if 'ws_sr_padron' in globals():
+        kwargs['com_server'] += [
+            Target(module=ws_sr_padron,modules="ws_sr_padron", create_exe=True, create_dll=True),
+            ]
+        kwargs['console'] += [
+            Target(module=ws_sr_padron, script='ws_sr_padron.py', dest_base="ws_sr_padron_cli"),
+            ]
+        __version__ += "+ws_sr_padron_" + ws_sr_padron.__version__
+        HOMO &= ws_sr_padron.HOMO
 
     if 'cot' in globals():
         kwargs['com_server'] += [

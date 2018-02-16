@@ -19,7 +19,7 @@ Liquidación Sector Pecuario (hacienda/carne) del web service WSLSP de AFIP
 __author__ = "Mariano Reingart <reingart@gmail.com>"
 __copyright__ = "Copyright (C) 2016 Mariano Reingart"
 __license__ = "GPL 3.0"
-__version__ = "1.05d"
+__version__ = "1.06b"
 
 LICENCIA = """
 wslsp.py: Interfaz para generar Código de Autorización Electrónica (CAE) para
@@ -299,11 +299,19 @@ class WSLSP(BaseWS):
 
     @inicializar_y_capturar_excepciones
     def AgregarGasto(self, cod_gasto, descripcion=None, base_imponible=None,
-                     alicuota=None, importe=None, alicuota_iva=None):
+                     alicuota=None, importe=None, alicuota_iva=None,
+                     tipo_iva_nulo=None):
         "Agrega la información referente a los gastos de la liquidación"
+        # WSLSPv1.4.1: tipo_iva_nulo debe ser NG, NA, EX: Exento.
+        if alicuota_iva == 0:
+            alicuota_iva = None         # sólo acepta [10.5, 21.0]
+        elif alicuota_iva:
+            tipo_iva_nulo = None
         gasto = {'codGasto': cod_gasto, 'descripcion': descripcion, 
                  'baseImponible': base_imponible, 'alicuota': alicuota, 
-                 'importe': importe, 'alicuotaIVA': alicuota_iva}
+                 'importe': importe, 'alicuotaIVA': alicuota_iva,
+                 'tipoIVANulo': tipo_iva_nulo,
+                }
         if 'ajusteFinanciero' in self.solicitud:
             self.solicitud['ajusteFinanciero']['gasto'].append(gasto)
         else:
@@ -324,7 +332,7 @@ class WSLSP(BaseWS):
         return True
 
     @inicializar_y_capturar_excepciones
-    def AgregarDTE(self, nro_dte, nro_renspa):
+    def AgregarDTE(self, nro_dte, nro_renspa=None):
         "Agrega la información referente a DTE (multiples)"
         d = {"nroDTE": nro_dte, "nroRenspa": nro_renspa}
         self.solicitud['dte'].append(d)
@@ -344,6 +352,9 @@ class WSLSP(BaseWS):
         for campo in ["guia", "dte", "gasto", "tributo"]:
             if campo in self.solicitud and not self.solicitud[campo]:
                 del self.solicitud[campo]
+        for item in self.solicitud['itemDetalleLiquidacion']:
+            if not item.get("liquidacionCompraAsociada", True):
+                del item["liquidacionCompraAsociada"]
         # llamo al webservice:
         ret = self.client.generarLiquidacion(
                         auth={
@@ -958,6 +969,10 @@ if __name__ == '__main__':
                     wslsp.AgregarDTE(nro_dte="418-4", nro_renspa=None)
                 wslsp.AgregarGasto(cod_gasto=16, base_imponible=230520.60,
                                    alicuota=3, alicuota_iva=10.5)
+                wslsp.AgregarGasto(cod_gasto=99, base_imponible=None,
+                                   alicuota=1, alicuota_iva=0, 
+                                   descripcion="Exento WSLSPv1.4.1",
+                                   tipo_iva_nulo="EX")
                 wslsp.AgregarTributo(cod_tributo=5, base_imponible=230520.60,
                                      alicuota=2.5)
                 wslsp.AgregarTributo(cod_tributo=3, importe=397)
@@ -1053,6 +1068,7 @@ if __name__ == '__main__':
             print "CAE:", wslsp.CAE
             print "Tipo Ajuste:", wslsp.GetParametro("tipo_ajuste")
             print "Modo Ajuste:", wslsp.GetParametro("modo_ajuste")
+            print "Errores:", wslsp.Errores
             if '--testing' in sys.argv:
                 assert wslsp.GetParametro("cae") == "97029023118043"
                 assert wslsp.GetParametro("cbte_ajuste", "tipo_cbte") == '186'
