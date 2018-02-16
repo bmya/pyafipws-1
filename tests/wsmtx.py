@@ -52,7 +52,7 @@ class TestMTX(unittest.TestCase):
         wsmtxca.Conectar(CACHE, WSDL)
     
     def atest_dummy(self):
-        print wsmtxca.client.help("dummy")
+        print(wsmtxca.client.help("dummy"))
         wsmtxca.Dummy()
         print "AppServerStatus", wsmtxca.AppServerStatus
         print "DbServerStatus", wsmtxca.DbServerStatus
