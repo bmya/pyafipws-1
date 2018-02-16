@@ -260,7 +260,7 @@ def leer_archivo(nombre_archivo):
                 d = leer(linea, ENCABEZADO)
                 dic.update(d)
             else:
-                print "Tipo de registro incorrecto:", linea[0]
+                print("Tipo de registro incorrecto:", linea[0])
     archivo.close()
                 
     if not 'cod_autorizacion' in dic:
@@ -273,19 +273,19 @@ def main():
     "Funcion principal para utilizar la interfaz por linea de comando"
 
     if '--formato' in sys.argv:
-        print "Formato:"
+        print("Formato:")
         for msg, formato in [('Encabezado', ENCABEZADO),
                              ('Observacion', OBSERVACION),
                              ('Evento', EVENTO), ('Error', ERROR), 
                              ]:
             comienzo = 1
-            print "=== %s ===" % msg
-            print "|| %-20s || %8s || %9s || %-12s || %-20s ||" % (
-                "Campo", "Posición", "Longitud", "Tipo", "Descripción")
+            print("=== %s ===" % msg)
+            print("|| %-20s || %8s || %9s || %-12s || %-20s ||" % (
+                "Campo", "Posición", "Longitud", "Tipo", "Descripción"))
             for fmt in formato:
                 clave, longitud, tipo, desc = fmt
-                print "|| %-20s || %8d || %9d || %-12s || %-20s ||" % (
-                    clave, comienzo, longitud, tipo, desc.encode("latin1"))
+                print("|| %-20s || %8d || %9d || %-12s || %-20s ||" % (
+                    clave, comienzo, longitud, tipo, desc.encode("latin1")))
                 comienzo += longitud
         sys.exit(0)
     
@@ -316,9 +316,9 @@ def main():
     if "--dummy" in sys.argv:
         #print wscdc.client.help("ComprobanteDummy")
         wscdc.Dummy()
-        print "AppServerStatus", wscdc.AppServerStatus
-        print "DbServerStatus", wscdc.DbServerStatus
-        print "AuthServerStatus", wscdc.AuthServerStatus
+        print("AppServerStatus", wscdc.AppServerStatus)
+        print("DbServerStatus", wscdc.DbServerStatus)
+        print("AuthServerStatus", wscdc.AuthServerStatus)
         sys.exit(0)
 
     # Gestionar credenciales de acceso con AFIP:
@@ -363,21 +363,21 @@ def main():
             # usar los datos pasados por linea de comandos:
             wscdc.ConstatarComprobante(*sys.argv[sys.argv.index("--constatar")+1:])
         
-        print "Resultado:", wscdc.Resultado
-        print "Mensaje de Error:", wscdc.ErrMsg
-        print "Observaciones:", wscdc.Obs    
+        print("Resultado:", wscdc.Resultado)
+        print("Mensaje de Error:", wscdc.ErrMsg)
+        print("Observaciones:", wscdc.Obs)
 
     if "--params" in sys.argv:
 
-        print "=== Modalidad Comprobantes ==="
-        print u'\n'.join(wscdc.ConsultarModalidadComprobantes("||"))
-        print "=== Tipo Comprobantes ==="
-        print u'\n'.join(wscdc.ConsultarTipoComprobantes("||"))
-        print "=== Tipo Documentos ==="
-        print u'\n'.join(wscdc.ConsultarTipoDocumentos("||"))
-        print "=== Tipo Opcionales ==="
-        print u'\n'.join(wscdc.ConsultarTipoOpcionales("||"))
-        print "Mensaje de Error:", wscdc.ErrMsg
+        print("=== Modalidad Comprobantes ===")
+        print(u'\n'.join(wscdc.ConsultarModalidadComprobantes("||")))
+        print("=== Tipo Comprobantes ===")
+        print(u'\n'.join(wscdc.ConsultarTipoComprobantes("||")))
+        print("=== Tipo Documentos ===")
+        print(u'\n'.join(wscdc.ConsultarTipoDocumentos("||")))
+        print("=== Tipo Opcionales ===")
+        print(u'\n'.join(wscdc.ConsultarTipoOpcionales("||")))
+        print("Mensaje de Error:", wscdc.ErrMsg)
         
 if __name__=="__main__":
     

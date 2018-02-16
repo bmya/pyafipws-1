@@ -146,7 +146,7 @@ def autorizar(ws, entrada, salida, informar_caea=False):
         encabezados = []
         opcionales = []
         compradores = []
-        if DEBUG: print "Leyendo DBF..."
+        if DEBUG: print("Leyendo DBF...")
 
         formatos = [('Encabezado', ENCABEZADO, encabezados), 
                     ('Tributo', TRIBUTO, tributos), 
@@ -188,7 +188,7 @@ def autorizar(ws, entrada, salida, informar_caea=False):
             if str(linea[0])=='0':
                 encabezado = leer(linea, ENCABEZADO)
                 encabezados.append(encabezado)
-                if DEBUG: print len(encabezados), "Leida factura %(cbt_desde)s" % encabezado 
+                if DEBUG: print(len(encabezados), "Leida factura %(cbt_desde)s" % encabezado)
             elif str(linea[0])=='1':
                 tributo = leer(linea, TRIBUTO)
                 encabezado.setdefault("tributos", []).append(tributo)
@@ -205,7 +205,7 @@ def autorizar(ws, entrada, salida, informar_caea=False):
                 comprador = leer(linea, COMPRADOR)
                 encabezado.setdefault("compradores", []).append(comprador)
             else:
-                print "Tipo de registro incorrecto:", linea[0]
+                print("Tipo de registro incorrecto:", linea[0])
 
     if not encabezados:
         raise RuntimeError("No se pudieron leer los registros de la entrada")
@@ -246,7 +246,7 @@ def autorizar(ws, entrada, salida, informar_caea=False):
             ws.AgregarComprador(**comprador)
 
         if DEBUG:
-            print '\n'.join(["%s='%s'" % (k,str(v)) for k,v in ws.factura.items()])
+            print('\n'.join(["%s='%s'" % (k,str(v)) for k,v in ws.factura.items()]))
         if not DEBUG or raw_input("Facturar (S/n)?")=="S":
             if not informar_caea:
                 cae = ws.CAESolicitar()
@@ -254,12 +254,12 @@ def autorizar(ws, entrada, salida, informar_caea=False):
             else:
                 cae = ws.CAEARegInformativo()
                 dic = ws.factura
-            print "Procesando %s %04d %08d %08d %s %s $ %0.2f IVA: $ %0.2f" % (
+            print("Procesando %s %04d %08d %08d %s %s $ %0.2f IVA: $ %0.2f" % (
                 TIPO_CBTE.get(dic['tipo_cbte'], dic['tipo_cbte']), 
                 dic['punto_vta'], dic['cbt_desde'], dic['cbt_hasta'], 
                 TIPO_DOC.get(dic['tipo_doc'], dic['tipo_doc']), dic['nro_doc'], 
                 float(dic['imp_total']), 
-                float(dic['imp_iva'] if dic['imp_iva'] is not None else 'NaN')) 
+                float(dic['imp_iva'] if dic['imp_iva'] is not None else 'NaN')))
             dic.update(encabezado)         # preservar la estructura leida
             dic.update({
                 'cae': cae and str(cae) or '',
@@ -272,7 +272,7 @@ def autorizar(ws, entrada, salida, informar_caea=False):
                 'emision_tipo': ws.EmisionTipo,
                 })
             dicts.append(dic)
-            print "NRO:", dic['cbt_desde'], "Resultado:", dic['resultado'], "%s:" % ws.EmisionTipo,dic['cae'],"Obs:",dic['motivos_obs'].encode("ascii", "ignore"), "Err:", dic['err_msg'].encode("ascii", "ignore"), "Reproceso:", dic['reproceso']
+            print("NRO:", dic['cbt_desde'], "Resultado:", dic['resultado'], "%s:" % ws.EmisionTipo,dic['cae'],"Obs:",dic['motivos_obs'].encode("ascii", "ignore"), "Err:", dic['err_msg'].encode("ascii", "ignore"), "Reproceso:", dic['reproceso'])
     if dicts:
         escribir_facturas(dicts, salida)
 
@@ -336,20 +336,20 @@ def depurar_xml(client, ruta="."):
 
 if __name__ == "__main__":
     if '/ayuda' in sys.argv:
-        print LICENCIA
-        print
-        print "Opciones: "
-        print " /ayuda: este mensaje"
-        print " /dummy: consulta estado de servidores"
-        print " /prueba: genera y autoriza una factura de prueba (no usar en producción!)"
-        print " /ult: consulta último número de comprobante"
-        print " /debug: modo depuración (detalla y confirma las operaciones)"
-        print " /formato: muestra el formato de los archivos de entrada/salida"
-        print " /get: recupera datos de un comprobante autorizado previamente (verificación)"
-        print " /xml: almacena los requerimientos y respuestas XML (depuración)"
-        print " /dbf: lee y almacena la información en tablas DBF"
-        print
-        print "Ver rece.ini para parámetros de configuración (URL, certificados, etc.)"
+        print(LICENCIA)
+        print("")
+        print("Opciones: ")
+        print(" /ayuda: este mensaje")
+        print(" /dummy: consulta estado de servidores")
+        print(" /prueba: genera y autoriza una factura de prueba (no usar en producción!)")
+        print(" /ult: consulta último número de comprobante")
+        print(" /debug: modo depuración (detalla y confirma las operaciones)")
+        print(" /formato: muestra el formato de los archivos de entrada/salida")
+        print(" /get: recupera datos de un comprobante autorizado previamente (verificación)")
+        print(" /xml: almacena los requerimientos y respuestas XML (depuración)")
+        print(" /dbf: lee y almacena la información en tablas DBF")
+        print("")
+        print("Ver rece.ini para parámetros de configuración (URL, certificados, etc.)")
         sys.exit(0)
 
     if '/debug'in sys.argv:
